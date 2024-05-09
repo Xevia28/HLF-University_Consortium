@@ -1,0 +1,60 @@
+{
+    "name": "UniversityConsortium",
+    "version": "1.0.0",
+    "channels": {
+        "natunichannel": {
+            "orderers": [
+                "orderer.natuni.edu"
+            ],
+            "peers": {
+                "cit.natuni.edu": {},
+                "cst.natuni.edu": {},
+                "bus.privateuni.edu": {},
+                "arts.interuni.edu": {}
+            }
+        }
+    },
+    "organizations": {
+        "Natuni": {
+            "mspid": "NatuniMSP",
+            "peers": [
+                "cit.natuni.edu",
+                "cst.natuni.edu"
+            ]
+        },
+        "Privateuni": {
+            "mspid": "PrivateuniMSP",
+            "peers": [
+                "bus.privateuni.edu"
+            ]
+        },
+        "Interuni": {
+            "mspid": "InteruniMSP",
+            "peers": [
+                "arts.interuni.edu"
+            ]
+        }
+    },
+    "orderers": {
+        "orderer.natuni.edu": {
+            "url": "grpc://orderer.natuni.edu:7050",
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer.natuni.edu"
+            }
+        }
+    },
+    "peers": {
+        "cit.natuni.edu": {
+            "url": "grpc://cit.natuni.edu:7051"
+        },
+        "cst.natuni.edu": {
+            "url": "grpc://cst.natuni.edu:7051"
+        },
+        "bus.privateuni.edu": {
+            "url": "grpc://bus.privateuni.edu:7051"
+        },
+        "arts.interuni.edu": {
+            "url": "grpc://arts.interuni.edu:7051"
+        }
+    }
+}

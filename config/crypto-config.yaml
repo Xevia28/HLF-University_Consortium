@@ -1,0 +1,41 @@
+##### Orderer for natuni
+OrdererOrgs:
+  - Name: Orderer
+    Domain: natuni.edu
+    EnableNodeOUs: true
+    Specs:
+      - Hostname: orderer
+      
+#### Peers for natuni
+PeerOrgs:
+  # Peer configuration for Natuni
+  - Name: Natuni
+    Domain: natuni.edu
+    EnableNodeOUs: true
+    Specs:
+      - Hostname: cit.natuni.edu
+        CommonName: cit.natuni.edu
+      - Hostname: cst.natuni.edu
+        CommonName: cst.natuni.edu
+    Users:
+      Count: 1
+
+  # Peer configuration for Privateuni
+  - Name: Privateuni
+    Domain: privateuni.edu
+    EnableNodeOUs: true
+    Specs:
+      - Hostname: bus.privateuni.edu
+        CommonName: bus.privateuni.edu
+    Users:
+      Count: 1
+
+  # Peer configuration for Interuni
+  - Name: Interuni
+    Domain: interuni.edu
+    EnableNodeOUs: true
+    Specs:
+      - Hostname: arts.interuni.edu
+        CommonName: arts.interuni.edu
+    Users:
+      Count: 1

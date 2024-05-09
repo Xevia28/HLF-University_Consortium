@@ -1,0 +1,144 @@
+version: '3.8'
+
+networks:
+  university-nets:
+    name: university-nets
+
+volumes:
+  data-orderer.natuni.edu:
+  data-cit.natuni.edu:
+  data-cst.natuni.edu:
+  data-bus.privateuni.edu:
+  data-arts.interuni.edu:
+
+
+services:
+  development:
+    container_name: university-consortium-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: |
+      sleep infinity
+    stop_grace_period: 5s
+    volumes:
+      - ../..:/workspaces:cached
+    networks:
+      - university-nets
+
+  orderer.natuni.edu:
+    container_name: orderer.natuni.edu
+    image: hyperledger/fabric-orderer:$IMAGE_TAG
+    command: orderer
+    environment:
+      - FABRIC_CFG_PATH=/var/hyperledger/config
+      - FABRIC_LOGGING_SPEC=ERROR
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+    volumes:
+      - ${PWD}/config/orderer:/var/hyperledger/config
+      - ${PWD}/config/crypto-config/ordererOrganizations/natuni.edu/orderers/orderer.natuni.edu/msp:/var/hyperledger/msp
+      - ${PWD}/config/crypto-config/ordererOrganizations/natuni.edu/orderers/orderer.natuni.edu/tls:/var/hyperledger/tls
+      - data-orderer.natuni.edu:/var/ledger
+    ports:
+      - 7050:7050
+      - 8443:8443
+    networks:
+      - university-nets
+
+  cit.natuni.edu:
+    container_name: cit.natuni.edu
+    image: hyperledger/fabric-peer:$IMAGE_TAG
+    environment:
+      - FABRIC_CFG_PATH=/var/hyperledger/config
+      - FABRIC_LOGGING_SPEC=WARNING
+      - CORE_PEER_LOCALMSPID=NatuniMSP
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=university-nets
+    command: peer node start
+    volumes:
+      - ${PWD}/config/cit:/var/hyperledger/config
+      - ${PWD}/config/crypto-config/peerOrganizations/natuni.edu/peers/cit.natuni.edu/msp:/var/hyperledger/msp
+      - ${PWD}/config/crypto-config/peerOrganizations/natuni.edu/peers/cit.natuni.edu/tls:/var/hyperledger/tls
+      - /var/run/:/var/run/
+      - data-cit.natuni.edu:/var/hyperledger/production
+    depends_on:
+      - orderer.natuni.edu
+    ports:
+      - 7051:7051
+      - 7052:7052
+    networks:
+      - university-nets
+
+  cst.natuni.edu:
+    container_name: cst.natuni.edu
+    image: hyperledger/fabric-peer:$IMAGE_TAG
+    environment:
+      - FABRIC_CFG_PATH=/var/hyperledger/config
+      - FABRIC_LOGGING_SPEC=WARNING
+      - CORE_PEER_LOCALMSPID=NatuniMSP
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=university-nets
+    command: peer node start
+    volumes:
+      - ${PWD}/config/cst:/var/hyperledger/config
+      - ${PWD}/config/crypto-config/peerOrganizations/natuni.edu/peers/cst.natuni.edu/msp:/var/hyperledger/msp
+      - ${PWD}/config/crypto-config/peerOrganizations/natuni.edu/peers/cst.natuni.edu/tls:/var/hyperledger/tls
+      - /var/run/:/var/run/
+      - data-cst.natuni.edu:/var/hyperledger/production
+    depends_on:
+      - orderer.natuni.edu
+    ports:
+      - 8051:7051
+      - 8052:7052
+    networks:
+      - university-nets
+
+  bus.privateuni.edu:
+    container_name: bus.privateuni.edu
+    image: hyperledger/fabric-peer:$IMAGE_TAG
+    working_dir: $HOME
+    command: peer node start
+    environment:
+      - FABRIC_CFG_PATH=/var/hyperledger/config
+      - FABRIC_LOGGING_SPEC=WARNING
+      - CORE_PEER_LOCALMSPID=PrivateuniMSP
+      - GOPATH=/opt/gopath
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=university-nets
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=bus.privateuni.edu:7051
+    volumes:
+      - ${PWD}/config/bus:/var/hyperledger/config
+      - ${PWD}/config/crypto-config/peerOrganizations/privateuni.edu/peers/bus.privateuni.edu/msp:/var/hyperledger/msp
+      - ${PWD}/config/crypto-config/peerOrganizations/privateuni.edu/peers/bus.privateuni.edu/tls:/var/hyperledger/tls
+      - /var/run/:/var/run/
+      - data-bus.privateuni.edu:/var/hyperledger/production
+    depends_on:
+      - orderer.natuni.edu
+    ports:
+      - 9051:7051
+      - 9052:7052
+    networks:
+      - university-nets
+
+  arts.interuni.edu:
+    container_name: arts.interuni.edu
+    image: hyperledger/fabric-peer:$IMAGE_TAG
+    working_dir: $HOME
+    command: peer node start
+    environment:
+      - FABRIC_CFG_PATH=/var/hyperledger/config
+      - FABRIC_LOGGING_SPEC=WARNING
+      - CORE_PEER_LOCALMSPID=InteruniMSP
+      - GOPATH=/opt/gopath
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=university-nets
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=arts.interuni.edu:7051
+    volumes:
+      - ${PWD}/config/arts:/var/hyperledger/config
+      - ${PWD}/config/crypto-config/peerOrganizations/interuni.edu/peers/arts.interuni.edu/msp:/var/hyperledger/msp
+      - ${PWD}/config/crypto-config/peerOrganizations/interuni.edu/peers/arts.interuni.edu/tls:/var/hyperledger/tls
+      - /var/run/:/var/run/
+      - data-arts.interuni.edu:/var/hyperledger/production
+    depends_on:
+      - orderer.natuni.edu
+    ports:
+      - 10051:7051
+      - 10052:7052
+    networks:
+      - university-nets

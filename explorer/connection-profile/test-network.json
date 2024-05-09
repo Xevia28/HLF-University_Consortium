@@ -1,0 +1,52 @@
+{
+	"name": "test-network",
+	"version": "1.0.0",
+	"client": {
+		"tlsEnable": false,
+		"adminCredential": {
+			"id": "admin",
+			"password": "admin"
+		},
+		"enableAuthentication": false,
+		"organization": "NatuniMSP",
+		"connection": {
+			"timeout": {
+				"peer": {
+					"endorser": "300"
+				},
+				"orderer": "300"
+			}
+		}
+	},
+	"channels": {
+		"natunichannel": {
+			"peers": {
+				"cit.natuni.edu": {},
+				"cst.natuni.edu": {}
+			}
+		}
+	},
+	"organizations": {
+		"NatuniMSP": {
+			"mspid": "NatuniMSP",
+			"adminPrivateKey": {
+				"path": "/tmp/crypto/peerOrganizations/natuni.edu/users/Admin@natuni.edu/msp/keystore/priv_sk"
+			},
+			"peers": [
+				"cit.natuni.edu",
+				"cst.natuni.edu"
+			],
+			"signedCert": {
+				"path": "/tmp/crypto/peerOrganizations/natuni.edu/users/Admin@natuni.edu/msp/signcerts/Admin@natuni.edu-cert.pem"
+			}
+		}
+	},
+	"peers": {
+		"cit.natuni.edu": {
+			"url": "grpc://cit.natuni.edu:7051"
+		},
+		"cst.natuni.edu": {
+			"url": "grpc://cst.natuni.edu:7051"
+		}
+	}
+}
